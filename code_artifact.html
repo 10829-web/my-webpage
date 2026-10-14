@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>지식 탐험대 - 메가 상식 퀴즈 마스터</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-slate-100 min-h-screen flex items-center justify-center p-4 sm:p-6">
+
+    <div class="w-full max-w-2xl bg-slate-900/90 backdrop-blur-xl border border-slate-800 rounded-3xl shadow-2xl p-6 sm:p-10 relative overflow-hidden my-auto">
+        
+        <!-- Background Glow Ornaments -->
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <!-- 1. Category Selection View -->
+        <div id="categoryView" class="space-y-6 animate-fade">
+            <div class="text-center space-y-2">
+                <span class="bg-indigo-500/10 text-indigo-400 font-bold text-xs uppercase tracking-widest px-3 py-1.5 rounded-full border border-indigo-500/20">MEGA QUIZ DB (200+ Questions)</span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">상식 퀴즈 마스터</h1>
+                <p class="text-slate-400 text-sm sm:text-base">분야별 대규모 데이터베이스에서 매번 랜덤으로 5문제가 출제됩니다!</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-2">
+                <button onclick="startQuiz('history')" class="group p-5 bg-slate-800/60 hover:bg-indigo-600/20 border border-slate-700/60 hover:border-indigo-500/50 rounded-2xl text-left transition-all flex items-center gap-4">
+                    <span class="text-3xl p-3 bg-indigo-500/10 rounded-xl group-hover:scale-110 transition-transform">🏛️</span>
+                    <div>
+                        <h3 class="font-bold text-slate-100 group-hover:text-indigo-300">역사</h3>
+                        <p class="text-xs text-slate-400">한국 및 세계사 핵심 50제</p>
+                    </div>
+                </button>
+                <button onclick="startQuiz('science')" class="group p-5 bg-slate-800/60 hover:bg-emerald-600/20 border border-slate-700/60 hover:border-emerald-500/50 rounded-2xl text-left transition-all flex items-center gap-4">
+                    <span class="text-3xl p-3 bg-emerald-500/10 rounded-xl group-hover:scale-110 transition-transform">🔬</span>
+                    <div>
+                        <h3 class="font-bold text-slate-100 group-hover:text-emerald-300">과학</h3>
+                        <p class="text-xs text-slate-400">우주, 물리, 생물 탐구 50제</p>
+                    </div>
+                </button>
+                <button onclick="startQuiz('generals')" class="group p-5 bg-slate-800/60 hover:bg-amber-600/20 border border-slate-700/60 hover:border-amber-500/50 rounded-2xl text-left transition-all flex items-center gap-4">
+                    <span class="text-3xl p-3 bg-amber-500/10 rounded-xl group-hover:scale-110 transition-transform">💡</span>
+                    <div>
+                        <h3 class="font-bold text-slate-100 group-hover:text-amber-300">일반상식</h3>
+                        <p class="text-xs text-slate-400">시사, 경제, 상식 50제</p>
+                    </div>
+                </button>
+                <button onclick="startQuiz('culture')" class="group p-5 bg-slate-800/60 hover:bg-pink-600/20 border border-slate-700/60 hover:border-pink-500/50 rounded-2xl text-left transition-all flex items-center gap-4">
+                    <span class="text-3xl p-3 bg-pink-500/10 rounded-xl group-hover:scale-110 transition-transform">🎨</span>
+                    <div>
+                        <h3 class="font-bold text-slate-100 group-hover:text-pink-300">대중문화/예술</h3>
+                        <p class="text-xs text-slate-400">영화, 음악, 미술, 문학 50제</p>
+                    </div>
+                </button>
+            </div>
+            
+            <div class="pt-2">
+                <button onclick="startQuiz('mixed')" class="w-full group p-5 bg-gradient-to-r from-indigo-900/40 to-purple-900/40 hover:from-indigo-600/30 hover:to-purple-600/30 border border-purple-500/30 rounded-2xl text-left transition-all flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <span class="text-3xl p-3 bg-purple-500/20 rounded-xl group-hover:scale-110 transition-transform">🔥</span>
+                        <div>
+                            <h3 class="font-bold text-white group-hover:text-purple-300 text-lg">전체 분야 혼합 모음</h3>
+                            <p class="text-xs text-slate-300">모든 200문 중에서 무작위 5문제 출제</p>
+                        </div>
+                    </div>
+                    <span class="text-purple-400 font-bold text-sm pr-2">시작하기 →</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. Quiz Session View -->
+        <div id="quizView" class="hidden space-y-6 animate-fade">
+            <!-- Header Progress -->
+            <div class="flex items-center justify-between text-sm text-slate-400 border-b border-slate-800 pb-4">
+                <span id="questionCategoryBadge" class="bg-indigo-500/10 text-indigo-400 font-semibold px-3 py-1 rounded-full text-xs border border-indigo-500/20">카테고리</span>
+                <div class="flex items-center gap-4">
+                    <span id="questionCounter">문제 1 / 5</span>
+                    <span id="liveScore" class="font-bold text-emerald-400">점수: 0점</span>
+                </div>
+            </div>
+
+            <!-- Question Box -->
+            <div class="space-y-3">
+                <h2 id="questionText" class="text-xl sm:text-2xl font-bold text-white leading-snug">질문이 여기에 표시됩니다.</h2>
+            </div>
+
+            <!-- Options List -->
+            <div id="optionsContainer" class="space-y-3 pt-2">
+                <!-- Dynamically populated options -->
+            </div>
+
+            <!-- Feedback & Next Action -->
+            <div id="feedbackContainer" class="hidden pt-2 flex items-center justify-between bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80">
+                <p id="feedbackText" class="font-semibold text-sm"></p>
+                <button onclick="nextQuestion()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-600/20 text-sm">
+                    다음 문제 →
+                </button>
+            </div>
+        </div>
+
+        <!-- 3. Result Card View -->
+        <div id="resultView" class="hidden space-y-6 animate-fade">
+            <div class="text-center space-y-2">
+                <div class="w-20 h-20 bg-indigo-500/10 border border-indigo-500/30 rounded-3xl flex items-center justify-center mx-auto text-4xl shadow-inner mb-4">
+                    🏆
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white">퀴즈 완료!</h2>
+                <p class="text-slate-400 text-sm">모든 문제를 풀었습니다. 최종 결과와 오답노트를 확인하세요.</p>
+            </div>
+
+            <!-- Score Badge Card -->
+            <div class="bg-slate-800/60 border border-slate-700/60 rounded-3xl p-6 space-y-4 max-w-sm mx-auto shadow-xl">
+                <div>
+                    <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">최종 점수</span>
+                    <div id="finalScoreDisplay" class="text-4xl font-extrabold text-indigo-400 mt-1">80점</div>
+                </div>
+                <div class="border-t border-slate-700/60 pt-4 flex justify-around text-center">
+                    <div>
+                        <span class="text-xs text-slate-400">정답 개수</span>
+                        <div id="correctCountDisplay" class="text-lg font-bold text-emerald-400 mt-0.5">4 / 5</div>
+                    </div>
+                    <div class="border-r border-slate-700/60"></div>
+                    <div>
+                        <span class="text-xs text-slate-400">등급</span>
+                        <div id="gradeDisplay" class="text-lg font-bold text-amber-400 mt-0.5">우수 (A)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wrong Notes Container -->
+            <div id="wrongNotesSection" class="space-y-3 pt-2">
+                <h3 class="font-bold text-white text-base border-b border-slate-800 pb-2 flex items-center justify-between">
+                    <span>📖 오답 노트</span>
+                    <span id="wrongCountBadge" class="text-xs bg-rose-500/20 text-rose-400 px-2.5 py-1 rounded-full border border-rose-500/30">틀린 문제 0개</span>
+                </h3>
+                <div id="wrongNotesList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- Restart Button -->
+            <div class="pt-2">
+                <button onclick="resetQuiz()" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-4 rounded-2xl transition-all shadow-xl shadow-indigo-600/20 active:scale-95 text-base">
+                    🔄 처음으로 돌아가기
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Massive Quiz Database: 50 items per category (Total 200+ questions)
+        const quizDatabase = {
+            history: [
+                { q: "조선 제4대 왕으로 훈민정음을 창제한 왕은?", options: ["태조", "세종대왕", "정조", "영조"], answer: 1 },
+                { q: "임진왜란 중 이순신 장군이 13척의 배로 대승을 거둔 해전은?", options: ["명량대첩", "한산도대첩", "노량해전", "당포해전"], answer: 0 },
+                { q: "1919년 3월 1일 일어난 독립만세 운동은?", options: ["6·10만세운동", "3·1운동", "광주학생항일운동", "물산장려운동"], answer: 1 },
+                { q: "로마 제국의 초대 황제는?", options: ["시저", "아우구스투스", "네로", "콘스탄티누스"], answer: 1 },
+                { q: "프랑스 대혁명이 발발한 연도는?", options: ["1789년", "1592년", "1910년", "1492년"], answer: 0 },
+                { q: "고려를 건국한 왕건이 세운 건국 연도는?", options: ["918년", "936년", "1392년", "698년"], answer: 0 },
+                { q: "신라의 삼국 통일에 크게 기여한 화랑 출신의 장군은?", options: ["계백", "김유신", "을지문덕", "연개소문"], answer: 1 },
+                { q: "발해를 건국한 왕은?", options: ["대조영", "왕건", "주몽", "근초고왕"], answer: 0 },
+                { q: "조선 후기 실학자 중 '학민원' 및 '목민심서'를 저술한 인물은?", options: ["정약용", "이익", "박지원", "홍대용"], answer: 0 },
+                { q: "미국의 독립 선언문이 발표된 연도는?", options: ["1776년", "1812년", "1865년", "1901년"], answer: 0 },
+                { q: "발명가 토머스 에디슨이 백열전구를 발명한 세기는?", options: ["18세기", "19세기", "20세기", "17세기"], answer: 1 },
+                { q: "조선시대 왕의 비밀 감찰 기구로 유명했던 기관은?", options: ["의금부", "암행어사", "성균관", "집현전"], answer: 1 },
+                { q: "조선시대 신문고를 처음 설치한 왕은?", options: ["태종", "세종", "영조", "정조"], answer: 0 },
+                { q: "청일전쟁의 결과 체결된 불평등 조약의 이름은?", options: ["시모노세키 조약", "을사조약", "강화도조약", "포츠머스 조약"], answer: 0 },
+                { q: "제1차 세계대전이 발발한 연도는?", options: ["1914년", "1939년", "1905년", "1925년"], answer: 0 },
+                { q: "제2차 세계대전이 종료된 연도는?", options: ["1945년", "1950년", "1918년", "1960년"], answer: 0 },
+                { q: "조선 제22대 왕으로 수원 화성을 건립한 개혁 군주는?", options: ["정조", "영조", "숙종", "광해군"], answer: 0 },
+                { q: "고구려 을지문덕 장군이 수나라 군대를 대파한 전투는?", options: ["살수대첩", "안시성전투", "매소성전투", "황산벌전투"], answer: 0 },
+                { q: "백제의 성왕이 도읍을 옮긴 곳으로, 사비 시대의 중심지는?", options: ["부여", "공주", "익산", "서울"], answer: 0 },
+                { q: "한국사에서 최초의 국가로 인정받는 청동기 문화 국가는?", options: ["고조선", "부여", "옥저", "동예"], answer: 0 },
+                { q: "고려시대 팔만대장경을 국난 극복을 위해 보관한 사찰은?", options: ["해인사", "불국사", "통도사", "화엄사"], answer: 0 },
+                { q: "조선시대 임진왜란 중 옥포해전이 벌어진 연도는?", options: ["1592년", "1597년", "1593년", "1600년"], answer: 0 },
+                { q: "독일의 베를린 장벽이 무너진 연도는?", options: ["1989년", "1975년", "1991년", "1980년"], answer: 0 },
+                { q: "소련의 마지막 서기장이자 개혁(페레스트로이카)을 이끈 인물은?", options: ["고르바초프", "스탈린", "레닌", "푸틴"], answer: 0 },
+                { q: "영국의 명예혁명이 일어난 세기는?", options: ["17세기", "16세기", "18세기", "19세기"], answer: 0 },
+                { q: "콜럼버스가 아메리카 대륙을 처음 발견한 연도는?", options: ["1492년", "1500년", "1453년", "1510년"], answer: 0 },
+                { q: "조선시대 훈구파에 대항하여 사림파가 등용되는 계기가 된 사화가 아닌 것은?", options: ["갑자사화", "무오사화", "기묘사화", "임진사화"], answer: 3 },
+                { q: "대한민국 임시정부가 수립된 해는?", options: ["1919년", "1945년", "1910년", "1948년"], answer: 0 },
+                { q: "조선시대 광해군이 실시한 중립 외교의 핵심 내용으로 알맞은 것은?", options: ["명과 후금 사이의 중립 외교", "청나라와의 전면전", "일본과의 국교 단절", "미국과의 통상 수교"], answer: 0 },
+                { q: "한국전쟁(6·25 전쟁)이 발발한 날짜는?", options: ["1950년 6월 25일", "1953년 7월 27일", "1945년 8월 15일", "1948년 8월 15일"], answer: 0 },
+                { q: "고려 광종이 노비들의 해방을 위해 실시한 개혁 정책은?", options: ["노비안검법", "과전법", "전시과", "공민왕의 개혁"], answer: 0 },
+                { q: "발해의 최고 전성기를 이끌며 '해동성국'이라 불린 왕은?", options: ["문왕", "무왕", "선왕", "대조영"], answer: 2 },
+                { q: "신라 진흥왕 때 영토 확장과 인재 양성을 위해 만든 청소년 조직은?", options: ["화랑도", "배달국", "조선청년단", "국학"], answer: 0 },
+                { q: "조선시대 의병장 중 행주대첩을 승리로 이끈 장군은?", options: ["권율", "이순신", "곽재우", "김시민"], answer: 0 },
+                { q: "고려시대 몽골과의 항전 과정에서 만들어진 대장경은?", options: ["팔만대장경", "초조대장경", "속장경", "교장"], answer: 0 },
+                { q: "조선 세조 때 집필되기 시작하여 완성된 종합 법전은?", options: ["경국대전", "경국대전을 보완한 속대전", "대전회통", "속오법"], answer: 0 },
+                { q: "삼국시대 중 가장 먼저 중앙 집권 체제를 확립한 국가는?", options: ["백제", "고구려", "신라", "가야"], answer: 0 },
+                { q: "조선시대 실학자 중 북학파에 속하며 '열하일기'를 쓴 인물은?", options: ["박지원", "정약용", "이익", "유형원"], answer: 0 },
+                { q: "중국 오랫동안 분열되어 있던 진나라를 통일한 최초의 황제는?", options: ["진시황", "한고조", "측천무후", "한무제"], answer: 0 },
+                { q: "고대 이집트 문명이 발달한 강은?", options: ["나일강", "티그리스강", "유프라테스강", "황하강"], answer: 0 },
+                { q: "메소포타미아 문명에서 사용된 세계 최초의 문자는?", options: ["설형문자(쐐기문자)", "상형문자", "알파벳", "한자"], answer: 0 },
+                { q: "고대 그리스의 철학자로 소크라테스의 제자는?", options: ["플라톤", "아리스토텔레스", "피타고라스", "헤로도토스"], answer: 0 },
+                { q: "1215년 영국의 왕이 귀한들의 압력으로 서명한 민주주의의 기초가 된 문서는?", options: ["마그나 카르타(대헌장)", "인권선언문", "권리장전", "독립선언서"], answer: 0 },
+                { q: "조선시대 흥선대원군이 쇄국정책을 펼치며 세운 척화비의 건립 장소는?", options: ["전국 각지의 요충지", "경복궁 정문", "종묘 앞", "한성부 청사"], answer: 0 },
+                { q: "1945년 해방 직후 한반도의 신탁통치를 결정하기 위해 열린 회의는?", options: ["모스크바 삼상회의", "얄타회담", "포츠담회담", "카이로회담"], answer: 0 },
+                { q: "고려시대 최충헌이 수립한 무신정권의 최고 권력 기구는?", options: ["도방", "중서문하성", "정중부의 정방", "교정도감"], answer: 3 },
+                { q: "조선시대 인조반정이 일어난 연도는?", options: ["1623년", "1592년", "1636년", "1724년"], answer: 0 },
+                { q: "고려 공민왕이 반원 자주 정책을 펼칠 때 배척한 대표적인 친원 세력은?", options: ["권문세족", "사림", "훈구", "노론"], answer: 0 },
+                { q: "신라 지증왕 때 나라의 이름을 '신라'로 확정하고 왕의 칭호를 바꾼 명칭은?", options: ["왕", "이사금", "마립간", "차차웅"], answer: 0 },
+                { q: "고대 로마와 카르타고가 벌인 세 차례의 대전쟁 명칭은?", options: ["포에니 전쟁", "펠로폰네소스 전쟁", "백년전쟁", "십자군 전쟁"], answer: 0 }
+            ],
+            science: [
+                { q: "태양계에서 태양과 가장 가까운 행성은?", options: ["금성", "지구", "수성", "화성"], answer: 2 },
+                { q: "표준 대기압에서 물이 끓는 온도는?", options: ["0℃", "50℃", "100℃", "120℃"], answer: 2 },
+                { q: "성인 기준 인체의 뼈 개수는 약 몇 개인가요?", options: ["약 106개", "약 206개", "약 306개", "약 406개"], answer: 1 },
+                { q: "진공 중에서 빛의 속도는 초당 약 몇 킬로미터인가요?", options: ["약 30만 km", "약 3천 km", "약 30억 km", "약 3만 km"], answer: 0 },
+                { q: "원소 기호 'Au'가 나타내는 원소는?", options: ["은", "구리", "금", "철"], answer: 2 },
+                { q: "식물의 광합성에 필수적으로 요구되지 않는 요소는?", options: ["이산화탄소", "산소", "물", "햇빛"], answer: 1 },
+                { q: "지구 대기 중 가장 많은 부피를 차지하는 기체는?", options: ["산소", "질소", "이산화탄소", "아르곤"], answer: 1 },
+                { q: "원소 주기율표에서 가장 가벼운 1번 원소는?", options: ["헬륨", "수소", "리튬", "탄소"], answer: 1 },
+                { q: "인간의 혈액형 중 만능 수혈자로 불리는 혈액형은?", options: ["A형", "B형", "AB형", "O형"], answer: 3 },
+                { q: "지구의 중심부를 이루는 내핵의 주성분은?", options: ["규소와 산소", "철과 니켈", "알루미늄", "탄소"], answer: 1 },
+                { q: "자석에서 서로 다른 극끼리 끌어당기는 힘을 무엇이라 하는가?", options: ["인력", "척력", "중력", "원심력"], answer: 0 },
+                { q: "생물의 유전 정보를 담고 있는 핵심 물질의 이름은?", options: ["DNA", "RNA", "ATP", "단백질"], answer: 0 },
+                { q: "소리가 전달되기 위해 반드시 필요한 것은?", options: ["매질", "진공", "전자기파", "빛"], answer: 0 },
+                { q: "지구에서 달까지의 평균 거리를 공전하는 궤도 형태는?", options: ["원형", "타원형", "직선", "포물선"], answer: 1 },
+                { q: "인간의 뇌에서 균형 감각을 담당하는 소기관은?", options: ["소뇌", "대뇌", "해마", "간뇌"], answer: 0 },
+                { q: "물질의 상태 변화 중 고체가 액체로 변하는 현상은?", options: ["융해", "기화", "응고", "승화"], answer: 0 },
+                { q: "상대성 이론을 발표한 천재 물리학자는?", options: ["아이작 뉴턴", "알베르트 아인슈타인", "갈릴레오 갈릴레이", "스티븐 호킹"], answer: 1 },
+                { q: "원자핵 속에 들어있는 양전하를 띤 입자의 이름은?", options: ["전자", "양성자", "중성자", "광자"], answer: 1 },
+                { q: "지구 온난화를 유발하는 주된 온실가스가 아닌 것은?", options: ["이산화탄소", "메탄", "아산화질소", "산소"], answer: 3 },
+                { q: "인체의 호흡계에서 산소와 이산화탄소가 교환되는 폐 속의 단위는?", options: ["폐포(꽈리)", "기관지", "심실", "모세혈관"], answer: 0 },
+                { q: "화산을 연구하는 학문을 무엇이라 하는가?", options: ["화산학", "지질학", "기상학", "천문학"], answer: 0 },
+                { q: "빛의 3원색에 포함되지 않는 색은?", options: ["빨강", "초록", "파랑", "노랑"], answer: 3 },
+                { q: "물에 뜨는 성질인 부력이 작용하는 원리를 발견한 고대 과학자는?", options: ["아르키메데스", "피타고라스", "유클리드", "파스칼"], answer: 0 },
+                { q: "태양계 행성 중 유일하게 고리가 뚜렷하게 관측되는 아름다운 행성은?", options: ["토성", "화성", "해왕성", "금성"], answer: 0 },
+                { q: "지각을 구성하는 원소 중 가장 많은 양을 차지하는 원소는?", options: ["산소", "규소", "철", "알루미늄"], answer: 0 },
+                { q: "pH 7을 기준으로 pH가 낮아질수록 어떤 성질이 강해지는가?", options: ["산성", "염기성", "중성", "알칼리성"], answer: 0 },
+                { q: "전자의 이동 방향과 반대 방향으로 흐른다고 약속된 전류의 방향은?", options: ["정(+)극에서 부(-)극", "부(-)극에서 정(+)극", "무작위", "방향성 없음"], answer: 0 },
+                { q: "인체의 소화기관 중 영양소의 흡수가 가장 많이 일어나는 곳은?", options: ["작은창자(소장)", "큰창자(대장)", "위", "식도"], answer: 0 },
+                { q: "지구의 자전 방향으로 올바른 것은?", options: ["서에서 동", "동에서 서", "남에서 북", "북에서 남"], answer: 0 },
+                { q: "태양계에서 가장 큰 행성은?", options: ["목성", "토성", "천왕성", "지구"], answer: 0 },
+                { q: "물체의 운동 상태를 변화시키는 원인이 되는 힘의 단위는?", options: ["뉴턴(N)", "줄(J)", "와트(W)", "파스칼(Pa)"], answer: 0 },
+                { q: "세포의 호흡을 담당하며 에너지를 생성하는 세포소기관은?", options: ["미토콘드리아", "리보솜", "골지체", "핵"], answer: 0 },
+                { q: "비타민 C 결핍으로 인해 발생하는 대표적인 질병은?", options: ["괴혈병", "구루병", "야맹증", "각기병"], answer: 0 },
+                { q: "공기의 압력을 측정하는 기구는?", options: ["기압계", "온도계", "습도계", "풍속계"], answer: 0 },
+                { q: "전자기 유도 법칙을 발견한 영국의 물리학자는?", options: ["마이클 패러데이", "토머스 에디슨", "니콜라 테슬라", "제임스 와트"], answer: 0 },
+                { q: "지구에서 가장 가까운 항성은?", options: ["태양", "시리우스", "베가", "알파 센타우리"], answer: 0 },
+                { q: "인체의 면역을 담당하며 항체를 생성하는 백혈구의 종류는?", options: ["림프구(B세포, T세포)", "적혈구", "혈소판", "혈장"], answer: 0 },
+                { q: "산화 환원 반응에서 전자를 잃는 반응을 무엇이라 하는가?", options: ["산화", "환원", "중화", "분해"], answer: 0 },
+                { q: "반도체 소자에 주로 사용되는 대표적인 규소(Si)의 성질은?", options: ["반도체성", "초전도성", "절연성", "강자성"], answer: 0 },
+                { q: "지구 자전의 증거가 아닌 것은?", options: ["계절의 변화", "푸코 진자의 회전", "별의 일주 운동", "전향력 발생"], answer: 0 },
+                { q: "화학에서 반응 속도를 빠르게 만들어 주는 물질은?", options: ["촉매", "방부제", "억제제", "완충제"], answer: 0 },
+                { q: "우주 공간에서 별이 탄생하는 거대한 가스와 먼지 구름은?", options: ["성운", "블랙홀", "퀘이사", "중성자별"], answer: 0 },
+                { q: "지구의 조석 현상(밀물과 썰물)을 일으키는 주된 천체는?", options: ["달과 태양", "화성과 목성", "금성과 수성", "혜성"], answer: 0 },
+                { q: "사람의 혈액 성분 중 산소를 운반하는 역할을 하는 것은?", options: ["적혈구", "백혈구", "혈소판", "혈장"], answer: 0 },
+                { q: "물속에 넣었을 때 소금이나 설탕처럼 녹는 물질을 무엇이라 하는가?", options: ["용질", "용매", "용액", "포화물"], answer: 0 },
+                { q: "만유인력의 법칙을 수학적으로 정립한 과학자는?", options: ["아이작 뉴턴", "알베르트 아인슈타인", "갈릴레오", "케플러"], answer: 0 },
+                { q: "빛이 굴절하는 현상과 관계없는 자연 현상은?", options: ["거울에 비친 모습", "신기루", "무지개", "물속의 젓가락이 꺾여 보이는 현상"], answer: 0 },
+                { q: "방사능 원소인 라듐을 발견하여 노벨상을 받은 과학자는?", options: ["마리 퀴리", "로절린 프랭클린", "에이다 러브레이스", "레이첼 카슨"], answer: 0 },
+                { q: "전기 저항의 단위를 나타내는 말은?", options: ["옴(Ω)", "볼트(V)", "암페어(A)", "와트(W)"], answer: 0 },
+                { q: "지구 대기의 층 중 오존층이 존재하여 자외선을 차단하는 층은?", options: ["성층권", "대류권", "중간권", "열권"], answer: 0 }
+            ],
+            generals: [
+                { q: "대한민국의 국화(나라꽃)는?", options: ["장미", "무궁화", "개나리", "진달래"], answer: 1 },
+                { q: "세계에서 면적이 가장 큰 국가는?", options: ["중국", "캐나다", "미국", "러시아"], answer: 3 },
+                { q: "올림픽 오륜기 색상에 포함되지 않는 색은?", options: ["주황색", "파란색", "노란색", "초록색"], answer: 0 },
+                { q: "유로(EUR)를 공통 통화로 사용하는 국가 연합은?", options: ["아세안", "유럽연합(EU)", "NATO", "OPEC"], answer: 1 },
+                { q: "인간의 뇌에서 기억과 학습을 담당하는 핵심 부위는?", options: ["해마", "소뇌", "뇌간", "시상하부"], answer: 0 },
+                { q: "유엔(UN)의 본부가 위치한 도시의 국가는?", options: ["미국 뉴욕", "스위스 제네바", "프랑스 파리", "영국 런던"], answer: 0 },
+                { q: "세계에서 인구가 가장 많은 국가는?", options: ["중국", "인도", "미국", "인도네시아"], answer: 1 },
+                { q: "대한민국의 화폐(원) 발행을 담당하는 중앙은행은?", options: ["한국은행", "국민은행", "우리은행", "신한은행"], answer: 0 },
+                { q: "인터넷 주소에서 국가 도메인 중 대한민국을 뜻하는 것은?", options: [".kr", ".kp", ".co", ".re"], answer: 0 },
+                { q: "지구의 날(Earth Day)로 지정된 날짜는?", options: ["4월 22일", "5월 5일", "6월 5일", "3월 1일"], answer: 0 },
+                { q: "세계에서 가장 긴 강의 이름은?", options: ["나일강", "아마존강", "양쯔강", "미시시피강"], answer: 0 },
+                { q: "스위스의 수도는 어디인가요?", options: ["베른", "취리히", "제네바", "로잔"], answer: 0 },
+                { q: "한국의 전통 무예로 올림픽 정식 종목인 것은?", options: ["태권도", "씨름", "택견", "검도"], answer: 0 },
+                { q: "경제학에서 물가가 지속해서 상승하는 현상을 무엇이라 하는가?", options: ["인플레이션", "디플레이션", "스태그플레이션", "환율 상승"], answer: 0 },
+                { q: "지구상에서 가장 넓은 바다는?", options: ["태평양", "대서양", "인도양", "북극해"], answer: 0 },
+                { q: "특허권을 관리하고 발급하는 대한민국의 정부 기관은?", options: ["특허청", "법무부", "과학기술정보통신부", "상공회의소"], answer: 0 },
+                { q: "국제연합(UN) 안전보장이사회의 상임이사국이 아닌 국가는?", options: ["독일", "미국", "중국", "프랑스"], answer: 0 },
+                { q: "세계에서 면적이 가장 작은 독립 국가는?", options: ["바티칸 시국", "모나코", "나우루", "산마리노"], answer: 0 },
+                { q: "주식 시장에서 주가가 하락하는 장세를 뜻하는 용어는?", options: ["베어마켓(약세장)", "불마켓(강세장)", "블루칩", "레버리지"], answer: 0 },
+                { q: "세계 보건 기구의 영문 약칭은?", options: ["WHO", "UNICEF", "UNESCO", "WTO"], answer: 0 },
+                { q: "한국 표준시의 기준이 되는 자오선의 기준 경도는?", options: ["동경 135도", "동경 120도", "동경 127.5도", "동경 140도"], answer: 0 },
+                { q: "커피 품종 중 아라비카와 함께 세계 양대 산맥을 이루는 품종은?", options: ["로부스타(카네포라)", "모카", "블루마운틴", "게이샤"], answer: 0 },
+                { q: "대한민국 국민의 4대 의무에 해당하지 않는 것은?", options: ["언론의 자유", "납세의 의무", "국방의 의무", "근로의 의무"], answer: 0 },
+                { q: "인권 선언일이 제정된 날짜는?", options: ["12월 10일", "3월 1일", "5월 18일", "8월 15일"], answer: 0 },
+                { q: "세계무역기구의 영문 약칭은?", options: ["WTO", "WHO", "IMF", "WB"], answer: 0 },
+                { q: "한 국가의 1년 동안 생산된 모든 최종 생산물의 시장 가치를 뜻하는 지표는?", options: ["GDP(국내총생산)", "GNP", "CPI", "PPI"], answer: 0 },
+                { q: "지구의 자오선 한 바퀴의 길이를 바탕으로 제정된 미터(m)의 기준 국가인 도시는?", options: ["프랑스 파리", "영국 런던", "미국 워싱턴", "독일 베를린"], answer: 0 },
+                { q: "세계에서 영토가 가장 넓은 순서대로 2위인 국가는?", options: ["캐나다", "중국", "미국", "브라질"], answer: 0 },
+                { q: "세계에서 가장 깊은 해저 협곡인 마리아나 해구의 위치는?", options: ["태평양", "대서양", "인도양", "남극해"], answer: 0 },
+                { q: "오스트레일리아의 수도는 어디인가요?", options: ["캔버라", "시드니", "멜버른", "브리즈번"], answer: 0 },
+                { q: "캐나다의 수도는 어디인가요?", options: ["오타와", "토론토", "밴쿠버", "몬트리올"], answer: 0 },
+                { q: "브라질의 수도는 어디인가요?", options: ["브라질리아", "상파울루", "리우데자네이루", "살바도르"], answer: 0 },
+                { q: "세계에서 가장 높은 산인 에베레스트산이 속한 산맥은?", options: ["히말라야산맥", "알프스산맥", "안데스산맥", "로키산맥"], answer: 0 },
+                { q: "남아프리카공화국의 수도 중 행정 수도는?", options: ["프리토리아", "케이프타운", "블룸폰테인", "요하네스버그"], answer: 0 },
+                { q: "국제사법재판소(ICJ)가 위치한 도시는?", options: ["네덜란드 헤이그", "미국 뉴욕", "벨기에 브뤼셀", "스위스 제네바"], answer: 0 },
+                { q: "유엔 교육 과학 문화 기구의 약칭은?", options: ["UNESCO", "UNICEF", "WHO", "UNHCR"], answer: 0 },
+                { q: "국제 통화 기금의 영문 약칭은?", options: ["IMF", "WTO", "WB", "OECD"], answer: 0 },
+                { q: "경제협력개발기구의 영문 약칭은?", options: ["OECD", "OPEC", "ASEAN", "APEC"], answer: 0 },
+                { q: "세계 인권의 날 제정에 영감을 준 선언은?", options: ["세계 인권 선언", "마그나 카르타", "독립선언서", "로마 조약"], answer: 0 },
+                { q: "지구상에서 사막의 면적이 가장 넓은 대륙은?", options: ["아프리카", "아시아", "오세아니아", "남미"], answer: 0 },
+                { q: "국제적 환경 보호 단체 중 초록색 평화 운동을 펼치는 단체는?", options: ["그린피스", "WWF", "UNEP", "FOE"], answer: 0 },
+                { q: "전 세계 표준시의 기준이 되는 그리니치 천문대가 위치한 나라는?", options: ["영국", "프랑스", "독일", "미국"], answer: 0 },
+                { q: "세계에서 가장 건조한 사막으로 알려진 아타카마 사막의 위치는?", options: ["칠레 (남아메리카)", "사우디아라비아", "이집트", "호주"], answer: 0 },
+                { q: "세계에서 가장 큰 섬의 이름은?", options: ["그린란드", "마다가스카르", "보르네오", "뉴기니"], answer: 0 },
+                { q: "세계에서 국경선이 가장 긴 두 나라 사이는?", options: ["미국과 캐나다", "러시아와 중국", "중국과 인도", "브라질과 아르헨티나"], answer: 0 },
+                { q: "세계에서 가장 큰 호수로 알려진 카스피해는 호수인가 바다인가?", options: ["호수", "바다", "내해", "만"], answer: 0 },
+                { q: "세계에서 가장 낮은 곳으로 유명한 사해의 접경 국가는?", options: ["이스라엘과 요르단", "이집트와 수단", "미국과 멕시코", "칠레와 아르헨티나"], answer: 0 },
+                { q: "한국의 독도가 속한 행정구역은?", options: ["경상북도 울릉군", "강원도 강릉시", "제주특별자치도", "부산광역시"], answer: 0 },
+                { q: "UN 사무총장의 임기는 몇 년인가요?", options: ["5년", "4년", "3년", "6년"], answer: 0 },
+                { q: "국제올림픽위원회의 본부가 위치한 도시는?", options: ["스위스 로잔", "스위스 제네바", "프랑스 파리", "스위스 취리히"], answer: 0 }
+            ],
+            culture: [
+                { q: "영화 '기생충'으로 칸 영화제 황금종려상 및 아카데미 작품상을 수상한 감독은?", options: ["봉준호", "박찬욱", "김지운", "임권택"], answer: 0 },
+                { q: "레오나르도 다 빈치가 그린 세계적인 명화의 이름은?", options: ["모나리자", "별이 빛나는 밤", "게르니카", "절규"], answer: 0 },
+                { q: "빈센트 반 고흐의 대표작으로 굽이치는 밤하늘을 그린 작품은?", options: ["별이 빛나는 밤", "해바라기", "감자 먹는 사람들", "절규"], answer: 0 },
+                { q: "한국 문학의 거장으로 '토지'를 집필한 작가는?", options: ["박경리", "채만식", "이문열", "황순원"], answer: 0 },
+                { q: "세계적인 팝 그룹 비틀즈의 고향인 영국의 도시는?", options: ["리버풀", "런던", "맨체스터", "버밍엄"], answer: 0 },
+                { q: "베토벤이 남긴 교향곡 중 '합창'이 포함된 마지막 교향곡 번호는?", options: ["제9번", "제5번", "제3번", "제7번"], answer: 0 },
+                { q: "희곡 '로미오와 줄리엣', '햄릿' 등을 쓴 영국의 대문호는?", options: ["윌리엄 셰익스피어", "찰스 디킨스", "제인 오스틴", "조지 오웰"], answer: 0 },
+                { q: "현대 미술에서 변기를 미술 작품으로 출품하여 '현대 미술의 아버지'라 불리는 작가는?", options: ["마르셀 뒤샹", "파블로 피카소", "앤디 워홀", "클로드 모네"], answer: 0 },
+                { q: "팝아트의 거장으로 캠벨 수프 캔과 마릴린 먼로를 실크스크린으로 표현한 작가는?", options: ["앤디 워홀", "잭슨 폴록", "살바도르 달리", "바스키아"], answer: 0 },
+                { q: "오페라의 유령, 캣츠 등을 작곡한 영국의 거장 뮤지컬 작곡가는?", options: ["앤드루 로이드 웨버", "스티븐 손드하임", "클로드미셸 숀버그", "엘튼 존"], answer: 0 },
+                { q: "소설 '어린 왕자'의 저자는?", options: ["생텍쥐페리", "빅토르 위고", "알베르 카뮈", "장폴 사르트르"], answer: 0 },
+                { q: "영화 '아바타' 시리즈를 연출한 감독은?", options: ["제임스 카메론", "크리스토퍼 놀란", "스티븐 스필버그", "리들리 스콧"], answer: 0 },
+                { q: "한국의 국악기 중 바람을 불어 소리를 내는 관악기가 아닌 것은?", options: ["가야금", "대금", "피리", "단소"], answer: 0 },
+                { q: "인상주의 화가 중 '수련' 연작을 그린 대표적인 화가는?", options: ["클로드 모네", "오귀스트 르누아르", "폴 세잔", "에드가 드가"], answer: 0 },
+                { q: "스페인 출신의 초현실주의 화가로 녹아내리는 시계를 그린 작가는?", options: ["살바도르 달리", "파블로 피카소", "조안 미로", "프란시스코 고야"], answer: 0 },
+                { q: "한국 최초로 칸 영화제 남우주연상을 수상한 영화는?", options: ["브로커", "헤어질 결심", "올드보이", "기생충"], answer: 0 },
+                { q: "세계 최고 권위의 음악 상으로 널리 알려진 미국의 대중음악 시상식은?", options: ["그래미 어워즈", "아카데미 시상식", "에미상", "빌보드 뮤직 어워드"], answer: 0 },
+                { q: "소설 '노인과 바다'를 집필한 미국의 작가는?", options: ["어니스트 헤밍웨이", "프랜시스 스콧 피츠제럴드", "마크 트웨인", "윌리엄 포크너"], answer: 0 },
+                { q: "입체파(큐비즘)를 창시한 스페인 출신의 천재 화가는?", options: ["파블로 피카소", "살바도르 달리", "빈센트 반 고흐", "클로드 모네"], answer: 0 },
+                { q: "영화 '인셉션', '오펜하이머' 등을 연출한 감독은?", options: ["크리스토퍼 놀란", "쿠엔틴 타란티노", "데이비드 핀처", "드니 빌뇌브"], answer: 0 },
+                { q: "한국의 전통 탈춤 중 UNESCO 인류무형문화유산에 등재되지 않은 것은?", options: ["하회별신굿탈놀이", "봉산탈춤", "양주별산대놀이", "전통 탈춤 종합극"], answer: 3 },
+                { q: "미술에서 풍경을 실내가 아닌 야외에서 직접 보고 그리는 화법을 뜻하는 용어는?", options: ["외광파(플레앵 에르)", "다다이즘", "야수파", "표현주의"], answer: 0 },
+                { q: "세종대왕 시대에 만들어진 최초의 악보로 괄목할 만한 유산은?", options: ["정간보", "수보", "공인트보", "합자보"], answer: 0 },
+                { q: "베네치아 영화제에서 최고상에 해당하는 상의 명칭은?", options: ["황금사자상", "황금종려상", "황금곰상", "황금황소상"], answer: 0 },
+                { q: "베를린 영화제에서 최고상에 해당하는 상의 명칭은?", options: ["황금곰상", "황금사자상", "황금종려상", "황금조수상"], answer: 0 },
+                { q: "독일의 극작가로 '서푼짜리 오페라', '사천의 선인' 등을 쓴 서사극의 거장은?", options: ["베르톨트 브레히트", "요한 볼프강 폰 괴테", "프리드리히 실러", "토마스 만"], answer: 0 },
+                { q: "러시아의 대문호로 '전쟁과 평화', '안나 카레니나'를 쓴 작가는?", options: ["레프 톨스토이", "표도르 도스토옙스키", "안톤 체호프", "막심 고리키"], answer: 0 },
+                { q: "죄와 벌, 카라마조프 가의 형제들을 집필한 러시아의 소설가는?", options: ["표도르 도스토옙스키", "레프 톨스토이", "알렉산드르 푸시킨", "니콜라이 고고리"], answer: 0 },
+                { q: "프랑스의 작가로 '레 미제라블'을 집필한 인물은?", options: ["빅토르 위고", "알렉상드르 뒤마", "기 드 모파상", "오노레 드 발자크"], answer: 0 },
+                { q: "삼총사, 몬테크리스토 백작 등을 집필한 프랑스의 소설가는?", options: ["알렉상드르 뒤마", "빅토르 위고", "쥐베르", "샤를 페로"], answer: 0 },
+                { q: "이탈리아의 시인으로 지옥, 연옥, 천국을 여행하는 '신곡'을 쓴 인물은?", options: ["단테 알리기에리", "페트라르카", "보카치오", "마키아벨리"], answer: 0 },
+                { q: "르네상스 시기 '군주론'을 집필한 정치 사상가는?", options: ["니콜로 마키아벨리", "토마스 모어", "에라스뮈스", "페트라르카"], answer: 0 },
+                { q: "토마스 모어가 저술한 이상향을 다룬 소설의 제목은?", options: ["유토피아", "국가론", "신국론", "사회계약론"], answer: 0 },
+                { q: "프랑스혁명기의 사상가로 '사회계약론'을 쓴 인물은?", options: ["장자크 루소", "볼테르", "몽테스키외", "디드로"], answer: 0 },
+                { q: "독일의 음악가로 '음악의 아버지'라 불리는 인물은?", options: ["요한 제바스티안 바흐", "볼프강 아마데우스 모차르트", "루트비히 판 베토벤", "프란츠 슈베르트"], answer: 0 },
+                { q: "고전파 음악의 거장으로 '음악의 신동'이라 불리는 오스트리아 출신 음악가는?", options: ["볼프강 아마데우스 모차르트", "요한 제바스티안 바흐", "요하네스 브람스", "프레데리크 쇼팽"], answer: 0 },
+                { q: "피아노의 시인이라 불리며 많은 녹턴과 에튀드를 작곡한 음악가는?", options: ["프레데리크 쇼팽", "프란츠 리스트", "차이콥스키", "클로드 드뷔시"], answer: 0 },
+                { q: "발레 음악 '백조의 호수', '호두까기 인형'을 작곡한 러시아의 음악가는?", options: ["표트르 일리치 차이콥스키", "이고르 스트라빈스키", "세르게이 라흐마니노프", "드미트리 쇼스타코비치"], answer: 0 },
+                { q: "오스트리아의 작곡가이자 빈 필하모닉 신년 음악회로 유명한 왈츠의 왕은?", options: ["요한 슈트라우스 2세", "프란츠 슈베르트", "구스타프 말러", "요하네스 브람스"], answer: 0 },
+                { q: "현대 음악의 문을 연 '봄의 제전'을 작곡한 러시아의 작곡가는?", options: ["이고르 스트라빈스키", "아놀드 쇤베르크", "베라 베베른", "클로드 드뷔시"], answer: 0 },
+                { q: "미국의 극작가로 '세일즈맨의 죽음'을 집필한 작가는?", options: ["아서 밀러", "유진 오닐", "테네시 윌리엄스", "어니스트 헤밍웨이"], answer: 0 },
+                { q: "미국의 소설가로 '위대한 개츠비'를 집필한 작가는?", options: ["프랜시스 스콧 피츠제럴드", "어니스트 헤밍웨이", "존 스타인벡", "제롬 데이비드 샐린저"], answer: 0 },
+                { q: "미국의 소설가로 '호밀밭의 파수꾼'을 집필한 작가는?", options: ["J.D. 샐린저", "트루먼 카포티", "잭 루이스", "존 스타인벡"], answer: 0 },
+                { q: "콜롬비아의 소설가로 마술적 사실주의의 걸작 '백년 동안의 고독'을 쓴 작가는?", options: ["가브리엘 가르시아 마르케스", "마리오 바르고스 뇨사", "호르헤 루이스 보르헤스", "파블로 네루다"], answer: 0 },
+                { q: "칠레의 시인으로 노벨 문학상을 수상한 라틴아메리카의 거장 시인은?", options: ["파블로 네루다", "가브리엘라 미스트랄", "옥타비오 파스", "호세 마르티"], answer: 0 },
+                { q: "인도의 시인으로 아시아인 최초로 노벨 문학상을 수상한 '기탄잘리'의 저자는?", options: ["타고르", "간디", "네루", "아마르티아 센"], answer: 0 },
+                { q: "아프리카 출신 최초로 노벨 문학상을 수상한 나이지리아의 작가는?", options: ["월레 소잉카", "나기브 마푸즈", "고르디머", "JM 쿠체"], answer: 0 },
+                { q: "이집트의 작가로 아랍 세계 최초로 노벨 문학상을 수상한 소설가는?", options: ["나기브 마푸즈", "타하 후세인", "알라 엘라스와니", "나발 엘 사다위"], answer: 0 },
+                { q: "일본의 소설가로 '설국'을 집필하여 일본 최초 노벨 문학상을 받은 작가는?", options: ["가와바타 야스나리", "오에 겐자부로", "무라카미 하루키", "다자이 오사무"], answer: 0 },
+                { q: "한국의 시인으로 '진달래꽃'을 지은 민족 시인은?", options: ["김소월", "한용운", "윤동주", "정지용"], answer: 0 }
+            ]
+        };
+
+        let currentCategory = '';
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let correctCount = 0;
+        let isAnswered = false;
+        let userMistakes = [];
+
+        function startQuiz(category) {
+            currentCategory = category;
+            
+            let pool = [];
+            if (category === 'mixed') {
+                pool = [...quizDatabase.history, ...quizDatabase.science, ...quizDatabase.generals, ...quizDatabase.culture];
+            } else {
+                pool = [...quizDatabase[category]];
+            }
+
+            // Shuffle and pick 5 random questions
+            currentQuestions = pool.sort(() => Math.random() - 0.5).slice(0, 5);
+            
+            currentIndex = 0;
+            score = 0;
+            correctCount = 0;
+            userMistakes = [];
+
+            document.getElementById('categoryView').classList.add('hidden');
+            document.getElementById('quizView').classList.remove('hidden');
+            document.getElementById('resultView').classList.add('hidden');
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            isAnswered = false;
+            const qData = currentQuestions[currentIndex];
+            
+            const categoryNames = { history: '역사', science: '과학', generals: '일반상식', culture: '대중문화/예술', mixed: '전체 분야 혼합' };
+            document.getElementById('questionCategoryBadge').innerText = categoryNames[currentCategory];
+            document.getElementById('questionCounter').innerText = `문제 ${currentIndex + 1} / ${currentQuestions.length}`;
+            document.getElementById('liveScore').innerText = `점수: ${score}점`;
+            document.getElementById('questionText').innerText = qData.q;
+            document.getElementById('feedbackContainer').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700/80 text-slate-200 font-medium transition-all flex items-center justify-between group cursor-pointer";
+                btn.innerHTML = `
+                    <span class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-xl bg-slate-700 text-slate-300 font-bold text-xs flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">${idx + 1}</span>
+                        ${opt}
+                    </span>
+                `;
+                btn.onclick = () => selectAnswer(idx, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selectedIdx, btnElement) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const qData = currentQuestions[currentIndex];
+            const options = document.getElementById('optionsContainer').children;
+            const feedbackContainer = document.getElementById('feedbackContainer');
+            const feedbackText = document.getElementById('feedbackText');
+
+            if (selectedIdx === qData.answer) {
+                btnElement.className = "w-full text-left p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 font-medium flex items-center justify-between shadow-lg shadow-emerald-500/10";
+                score += 20;
+                correctCount += 1;
+                feedbackText.innerHTML = "🎉 정답입니다! 완벽해요!";
+                feedbackText.className = "font-semibold text-sm text-emerald-400";
+            } else {
+                btnElement.className = "w-full text-left p-4 rounded-2xl bg-rose-500/20 border border-rose-500/50 text-rose-300 font-medium flex items-center justify-between";
+                options[qData.answer].className = "w-full text-left p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 font-medium flex items-center justify-between";
+                feedbackText.innerHTML = `❌ 아쉽네요! 정답은 '${qData.options[qData.answer]}' 입니다.`;
+                feedbackText.className = "font-semibold text-sm text-rose-400";
+
+                // Save to mistakes
+                userMistakes.push({
+                    question: qData.q,
+                    userAnswer: qData.options[selectedIdx],
+                    correctAnswer: qData.options[qData.answer]
+                });
+            }
+
+            // Disable all options after selection
+            for (let opt of options) {
+                opt.style.pointerEvents = 'none';
+            }
+
+            document.getElementById('liveScore').innerText = `점수: ${score}점`;
+            feedbackContainer.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < currentQuestions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultView').classList.remove('hidden');
+
+            document.getElementById('finalScoreDisplay').innerText = `${score}점`;
+            document.getElementById('correctCountDisplay').innerText = `${correctCount} / ${currentQuestions.length}`;
+
+            let grade = "수 (A)";
+            if (score === 100) grade = "천재 (S+)";
+            else if (score >= 80) grade = "우수 (A)";
+            else if (score >= 60) grade = "보통 (B)";
+            else if (score >= 40) grade = "노력 요망 (C)";
+            else grade = "분발 필요 (D)";
+
+            document.getElementById('gradeDisplay').innerText = grade;
+
+            // Render Wrong Notes
+            const wrongNotesList = document.getElementById('wrongNotesList');
+            const wrongCountBadge = document.getElementById('wrongCountBadge');
+            wrongNotesList.innerHTML = '';
+            wrongCountBadge.innerText = `틀린 문제 ${userMistakes.length}개`;
+
+            if (userMistakes.length === 0) {
+                wrongNotesList.innerHTML = `
+                    <div class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center text-emerald-300 text-sm font-medium">
+                        🎉 틀린 문제가 없습니다! 만점을 축하합니다!
+                    </div>
+                `;
+            } else {
+                userMistakes.forEach((item, idx) => {
+                    const div = document.createElement('div');
+                    div.className = "p-4 bg-slate-800/80 border border-slate-700/80 rounded-2xl space-y-1.5 text-sm";
+                    div.innerHTML = `
+                        <p class="font-bold text-white">Q. ${item.question}</p>
+                        <div class="flex flex-wrap gap-x-4 text-xs pt-1">
+                            <span class="text-rose-400">내 답변: <strong>${item.userAnswer}</strong></span>
+                            <span class="text-emerald-400">정답: <strong>${item.correctAnswer}</strong></span>
+                        </div>
+                    `;
+                    wrongNotesList.appendChild(div);
+                });
+            }
+        }
+
+        function resetQuiz() {
+            document.getElementById('resultView').classList.add('hidden');
+            document.getElementById('categoryView').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
